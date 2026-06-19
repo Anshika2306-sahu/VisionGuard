@@ -1,0 +1,82 @@
+# VisionGuard — one-command full stack (prototype on scalable primitives).
+# Run from repo root:  docker compose -f infra/docker-compose.yml up --build
+#
+# Scale story: `api` and `worker` are the same stateless image; add replicas
+# (docker compose up --scale worker=N) or move to k8s without code changes.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: vg
+      POSTGRES_PASSWORD: vg
+      POSTGRES_DB: visionguard
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vg"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://vg:vg@db:5432/visionguard
+      REDIS_URL: redis://redis:6379/0
+      PROCESS_MODE: celery
+      STORAGE_DIR: /app/data/evidence
+      MAPPLS_REST_KEY: ${MAPPLS_REST_KEY:-}
+      MAPPLS_MAP_SDK_KEY: ${MAPPLS_MAP_SDK_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-dev_secret_change_me}
+      MODEL_DETECTOR: /app/ml/weights/uvh26/yolo11s.pt
+      MODEL_HELMET: /app/ml/weights/helmet/best.pt
+    volumes:
+      - ../ml/weights:/app/ml/weights
+      - ../data:/app/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    command: celery -A app.worker.celery_app worker --loglevel=info -Q visionguard
+    environment:
+      DATABASE_URL: postgresql+psycopg://vg:vg@db:5432/visionguard
+      REDIS_URL: redis://redis:6379/0
+      PROCESS_MODE: celery
+      STORAGE_DIR: /app/data/evidence
+      MODEL_DETECTOR: /app/ml/weights/uvh26/yolo11s.pt
+      MODEL_HELMET: /app/ml/weights/helmet/best.pt
+    volumes:
+      - ../ml/weights:/app/ml/weights
+      - ../data:/app/data
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

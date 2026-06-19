@@ -1,0 +1,11 @@
+{
+  "system": {
+    "model": "yolo11s.pt",
+    "device": "cpu",
+    "images_benchmarked": 12,
+    "ms_per_image_cpu": 98.3,
+    "images_per_sec_cpu": 10.17,
+    "anpr_enabled": false,
+    "avg_detections_per_image": 10.8
+  }
+}

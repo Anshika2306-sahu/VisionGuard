@@ -1,0 +1,27 @@
+# VisionGuard ML pipeline + eval. Pin exact versions with `pip freeze` before submission.
+ultralytics
+torch
+torchvision
+opencv-python-headless
+numpy
+pillow
+
+# OCR — pick ONE (EasyOCR is simplest to install; PaddleOCR is more accurate)
+easyocr
+# paddleocr
+# paddlepaddle
+
+# Export / scaled inference
+onnx
+onnxruntime
+
+# Data tooling
+huggingface_hub
+datasets
+pandas
+
+# Evaluation
+matplotlib
+scikit-learn
+pycocotools
+python-Levenshtein

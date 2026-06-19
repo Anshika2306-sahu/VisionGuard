@@ -1,0 +1,54 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Env / secrets
+.env
+*.local
+
+# ML weights & data (downloaded via scripts, never committed)
+ml/weights/*
+!ml/weights/.gitkeep
+data/raw/*
+data/processed/*
+data/evidence/*
+data/samples/*
+!data/**/.gitkeep
+
+# caches
+.hf_cache/
+*.db
+
+# ultralytics auto-downloaded base models (land in cwd)
+/yolo11n.pt
+/yolov8n.pt
+*.pt
+
+# personal / working docs — kept local, not published
+docs/09_STEP_BY_STEP_BUILD_GUIDE.md
+docs/10_MASTER_PROMPT.md
+docs/12_RUNBOOK_AND_DEMO.md
+docs/13_PRESENTATION_SCRIPT.md
+VisionGuard_Design_Thoughts.md
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# DB / runtime
+*.db
+*.sqlite3
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Eval outputs (keep metrics.json, ignore heavy figures if large)
+ml/eval/figures/*
+!ml/eval/figures/.gitkeep
