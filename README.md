@@ -10,7 +10,7 @@
 
 ---
 
-## 30-second pitch
+## About
 
 Indian highways already run **Multi-Lane Free-Flow (MLFF)** tolling: you drive through at 100 km/h,
 an RFID reader scans your FASTag, an **ANPR camera reads your plate as a fallback**, LIDAR/radar build a
