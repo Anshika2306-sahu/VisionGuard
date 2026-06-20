@@ -1,0 +1,18 @@
+# Lean RUNTIME deps for the Hugging Face Space (no eval/build-heavy packages).
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy
+python-jose[cryptography]
+passlib
+python-multipart
+httpx
+pillow
+numpy
+opencv-python-headless
+torch
+torchvision
+ultralytics
+easyocr
+huggingface_hub
