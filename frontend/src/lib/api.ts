@@ -1,6 +1,9 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: "/api/v1" });
+// In dev, Vite proxies "/api" to localhost:8000. In a hosted build, set VITE_API_BASE
+// to the deployed backend URL (e.g. https://your-space.hf.space/api/v1).
+const API_BASE = (import.meta as any).env?.VITE_API_BASE || "/api/v1";
+export const api = axios.create({ baseURL: API_BASE });
 
 // attach JWT from localStorage
 api.interceptors.request.use((config) => {
