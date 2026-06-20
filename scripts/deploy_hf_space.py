@@ -39,6 +39,8 @@ IGNORE = [
     "ml/weights/helmet_train/**", "docs/09_*", "docs/10_*", "docs/12_*", "docs/13_*",
     "VisionGuard_Design_Thoughts.md", "*.zip", ".env", "README.md",
     "yolo11n.pt", "yolov8n.pt",
+    # NEVER upload .gitignore: HF honors it and would then ignore our model .pt files
+    ".gitignore",
 ]
 
 
@@ -72,6 +74,18 @@ def main() -> int:
         folder_path=REPO, repo_id=repo_id, repo_type="space", token=token,
         ignore_patterns=IGNORE, commit_message="Deploy VisionGuard (API + UI)",
     )
+
+    # Model weights are gitignored locally, so upload them explicitly (baked into the image
+    # for instant first-use). upload_folder would skip them; upload_file forces them in.
+    import glob as _glob
+    weights = ["ml/weights/helmet/best.pt"] + _glob.glob(
+        os.path.join(REPO, "ml/weights/uvh26/**/*.pt"), recursive=True)
+    for w in weights:
+        rel = os.path.relpath(w, REPO) if os.path.isabs(w) else w
+        if os.path.exists(os.path.join(REPO, rel)):
+            print("uploading model:", rel)
+            api.upload_file(path_or_fileobj=os.path.join(REPO, rel), path_in_repo=rel,
+                            repo_id=repo_id, repo_type="space", token=token)
 
     # Space config README (sdk/app_port) — uploaded last so it isn't overwritten
     api.upload_file(
