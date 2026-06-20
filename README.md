@@ -70,14 +70,13 @@ docker compose -f infra/docker-compose.yml up --build
 #    API docs       : http://localhost:8000/docs
 ```
 
-> Detailed, copy-paste, step-by-step instructions live in
-> [`docs/09_STEP_BY_STEP_BUILD_GUIDE.md`](docs/09_STEP_BY_STEP_BUILD_GUIDE.md).
+> For local development without Docker, see [`TESTING.md`](TESTING.md).
 
 ## Status — built & verified ✅
 
 | Layer | State | Verification |
 |---|---|---|
-| Design docs (HLD/LLD/workflow/roadmap/master-prompt) | done | `docs/` (12 files) |
+| Design docs (problem, HLD, LLD, workflow, roadmap, tech-stack, eval) | done | `docs/` |
 | ML pipeline (preprocess, detect, helmet, ANPR, annotate) | done | runs on real images |
 | Violation Reasoning Engine | done | **23/23** unit tests |
 | Real Bengaluru model (UVH-26 YOLOv11-S) | downloaded + running | detects India classes on real CCTV |
