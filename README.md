@@ -5,7 +5,6 @@
 VisionGuard is an end-to-end system that ingests CCTV footage and automatically detects, classifies, and evidences traffic violations — no-helmet riding, signal jumping, illegal parking — using a YOLOv11-based detection pipeline with ANPR for license-plate recognition. Detected violations flow through a FastAPI backend into automated challan generation, with a React + Mappls dashboard for live tracking and a citizen-facing portal for lookup.
 
 Rather than building enforcement infrastructure from scratch, VisionGuard reuses India's already-proven smart-traffic stack — the same ANPR + multi-angle-evidence + auto-challan pattern used in highway MLFF/FASTag tolling — and extends it from tolling to full city traffic enforcement. It's designed to run on Bengaluru's **2,800+ Safe City CCTV cameras**, using the open **UVH-26 / BMD-45** datasets sourced from those exact cameras, and plots everything on **MapMyIndia / Mappls** maps.
----
 
 ## Results
 
