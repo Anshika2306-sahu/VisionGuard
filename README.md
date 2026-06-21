@@ -1,113 +1,114 @@
 # VisionGuard AI
 
-**Automated Photo Identification & Classification of Traffic Violations using Computer Vision**
+**Automated traffic-violation detection and classification using computer vision.**
 
-> Built for the Bengaluru Traffic Police (ASTraM) + MapMyIndia hackathon.
-> We do not reinvent enforcement — we **reuse India's already-proven smart-traffic stack**
-> (MLFF tolling, FASTag/RFID, ANPR cameras, multi-angle evidence capture, automated e-notice)
-> and **extend it from tolling to full traffic-violation enforcement**, powered by Bengaluru's
-> existing **Safe City CCTV network** and **MapMyIndia / Mappls** location intelligence.
+VisionGuard is an end-to-end system that ingests CCTV footage and automatically detects, classifies, and evidences traffic violations — no-helmet riding, signal jumping, illegal parking — using a YOLOv11-based detection pipeline with ANPR for license-plate recognition. Detected violations flow through a FastAPI backend into automated challan generation, with a React + Mappls dashboard for live tracking and a citizen-facing portal for lookup.
+
+Rather than building enforcement infrastructure from scratch, VisionGuard reuses India's already-proven smart-traffic stack — the same ANPR + multi-angle-evidence + auto-challan pattern used in highway MLFF/FASTag tolling — and extends it from tolling to full city traffic enforcement. It runs on Bengaluru's existing **2,800+ Safe City CCTV cameras** (the same cameras behind the open **UVH-26 / BMD-45** datasets) and plots everything on **MapMyIndia / Mappls** maps.
 
 ---
 
-## About
+## Results
 
-Indian highways already run **Multi-Lane Free-Flow (MLFF)** tolling: you drive through at 100 km/h,
-an RFID reader scans your FASTag, an **ANPR camera reads your plate as a fallback**, LIDAR/radar build a
-3D profile + measure speed, high-speed cameras grab **multi-angle photographic evidence**, and the system
-**auto-flags violators and issues an e-notice payable in 72 hours**.
+| Metric | Value |
+|---|---|
+| Inference latency | **~98 ms/image (~10 img/s) on CPU** |
+| Violation engine tests | **23/23** passing |
+| Backend API e2e tests | **18/18** passing |
+| Security/robustness tests | **22/22** passing |
+| **Total automated tests** | **63/63 passing** |
+| Real-model verification | `no_helmet` and `red_light` challans generated end-to-end on real Bengaluru CCTV frames |
+| Helmet detection confidence | 0.77–0.93 (quick CPU-trained demo model) |
 
-**VisionGuard takes that exact, battle-tested enforcement pattern and points it at city traffic.**
-Instead of "did you pay the toll?", we ask "did you wear a helmet, stop at the line, park legally, ride
-double-only?" — using the **same ANPR + multi-angle-evidence + auto-challan + e-notice loop**, running on the
-**2,800+ Bengaluru Safe City cameras** that already exist (the very cameras behind the open **UVH-26 / BMD-45**
-datasets), and plotting everything on **MapMyIndia/Mappls** maps.
+---
 
-## Why this is credible 
+## Why this approach is credible
 
-| Asset we reuse | What it is | Why it matters |
+| Asset reused | What it is | Why it matters |
 |---|---|---|
-| **Bengaluru Safe City CCTV** | 2,800–3,600 existing police cameras | Zero new hardware to "go live" city-wide |
-| **UVH-26 / BMD-45 datasets** | 26K–45K labelled images from *those exact cameras*, free (CC BY 4.0) | India-specific, Bengaluru-specific, pre-trained models included |
-| **MLFF / FASTag / ANPR pattern** | Nationally deployed tolling enforcement loop | A proven, accepted enforcement workflow we mirror |
+| **Bengaluru Safe City CCTV** | 2,800–3,600 existing police cameras | Zero new hardware needed to go live city-wide |
+| **UVH-26 / BMD-45 datasets** | 26K–45K labelled images from those exact cameras, free (CC BY 4.0) | India-specific, Bengaluru-specific, pre-trained models included |
+| **MLFF / FASTag / ANPR pattern** | Nationally deployed tolling enforcement loop | A proven, already-accepted enforcement workflow we mirror |
 | **MapMyIndia / Mappls** | India's mapping backbone, free dev tier | Camera geolocation, heatmaps, citizen navigation alerts |
 
-## What's in this repo
+---
+
+## Architecture
 
 ```
 VisionGuard/
-├── README.md                     ← you are here
-├── docs/                         ← design set (read these in order)
-│   ├── 00_INDEX.md               ← start here: how to read the docs
-│   ├── 01_PROBLEM_AND_VISION.md  ← problem, reuse-existing-tech narrative, sponsor alignment
-│   ├── 02_DATASETS.md            ← every free dataset, Bengaluru-first, how to download
-│   ├── 03_HLD.md                 ← High-Level Design (architecture, components, diagrams)
-│   ├── 04_LLD.md                 ← Low-Level Design (schemas, APIs, model contracts, rules)
-│   ├── 05_WORKFLOW.md            ← end-to-end data flow + sequence diagrams
-│   ├── 06_CHAIN_OF_THOUGHT.md    ← every design decision and *why*
-│   ├── 07_SCALABILITY_ROADMAP.md ← prototype → whole-city scale (HLD + LLD of scaled system)
-│   ├── 08_TECH_STACK.md          ← every tool, free at every stage
-│   └── 11_PERFORMANCE_EVALUATION.md  ← Accuracy/Precision/Recall/F1/mAP + latency/throughput
-├── backend/                      ← FastAPI service (ingestion, inference, challan, analytics)
-├── ml/                           ← CV pipeline (preprocess, detect, ANPR, violation engine, eval)
-├── frontend/                     ← React + Mappls dashboard (Command Center + Citizen Portal)
-├── infra/                        ← Docker Compose, deployment configs
-├── data/                         ← datasets, sample images, generated evidence
-└── scripts/                      ← dataset download, model fetch, demo seeding
+├── backend/    ← FastAPI service (ingestion, inference, challan, analytics)
+├── ml/         ← CV pipeline (preprocess, detect, ANPR, violation engine, eval)
+├── frontend/   ← React + Mappls dashboard (Command Center + Citizen Portal)
+├── infra/      ← Docker Compose, deployment configs
+├── data/       ← datasets, sample images, generated evidence
+├── scripts/    ← dataset download, model fetch, demo seeding
+└── docs/       ← full design docs (HLD, LLD, workflow, roadmap, tech stack, eval)
 ```
 
-## Quick start (after the build phase)
+<details>
+<summary><strong>Full documentation index</strong> (click to expand)</summary>
+
+| Doc | Covers |
+|---|---|
+| `01_PROBLEM_AND_VISION.md` | Problem statement, reuse-existing-tech narrative |
+| `02_DATASETS.md` | Every dataset used, how to download |
+| `03_HLD.md` | High-Level Design — architecture, components, diagrams |
+| `04_LLD.md` | Low-Level Design — schemas, APIs, model contracts, rules |
+| `05_WORKFLOW.md` | End-to-end data flow + sequence diagrams |
+| `06_CHAIN_OF_THOUGHT.md` | Design decisions and rationale |
+| `07_SCALABILITY_ROADMAP.md` | Prototype → whole-city scale (HLD + LLD) |
+| `08_TECH_STACK.md` | Every tool used, free at every stage |
+| `11_PERFORMANCE_EVALUATION.md` | Accuracy / Precision / Recall / F1 / mAP + latency |
+
+</details>
+
+---
+
+## Tech Stack
+
+- **ML / CV:** YOLOv11, ANPR (OCR), PyTorch
+- **Backend:** FastAPI, PostgreSQL, Redis
+- **Frontend:** React, Mappls/MapMyIndia
+- **Infra:** Docker Compose
+
+---
+
+## Setup
+
+### Run with Docker
 
 ```bash
-# 1. clone + enter
 cd VisionGuard
-
-# 2. spin everything up (Postgres + Redis + API + worker + frontend)
 docker compose -f infra/docker-compose.yml up --build
-
-# 3. open the dashboard
-#    Command Center : http://localhost:5173
-#    API docs       : http://localhost:8000/docs
 ```
 
-> For local development without Docker, see [`TESTING.md`](TESTING.md).
+- Command Center: `http://localhost:5173`
+- API docs: `http://localhost:8000/docs`
 
-## Status — built & verified ✅
-
-| Layer | State | Verification |
-|---|---|---|
-| Design docs (problem, HLD, LLD, workflow, roadmap, tech-stack, eval) | done | `docs/` |
-| ML pipeline (preprocess, detect, helmet, ANPR, annotate) | done | runs on real images |
-| Violation Reasoning Engine | done | **23/23** unit tests |
-| Real Bengaluru model (UVH-26 YOLOv11-S) | downloaded + running | detects India classes on real CCTV |
-| Helmet model (trained on Roboflow set) | trained (quick CPU demo) | no-helmet 0.77–0.93; Colab notebook for full quality |
-| FastAPI backend (auth/RBAC, ingest, challan, geo, analytics, citizen) | done | **18/18** e2e tests |
-| Security / break testing | done | **22/22** robustness tests |
-| Frontend (React + Mappls, Command Center + Citizen Portal) | done | `npm run build` passes |
-| Docker Compose (db+redis+api+worker+frontend) | done | `infra/docker-compose.yml` |
-| Eval harness (latency/mAP/P-R-F1) | done | **~98 ms/img, ~10 img/s on CPU** |
-
-**63 automated tests passing**, plus real-model end-to-end verified (real `no_helmet` and `red_light`
-challans created through the API on real Bengaluru frames).
-
-### Run it locally (no Docker)
+### Run locally (no Docker)
 
 ```bash
-# one-time: models are already downloaded into ml/weights/ ; deps into .venv/
 # backend (terminal 1)
 cd VisionGuard && source .venv/bin/activate
 DATABASE_URL="sqlite:///./data/visionguard.db" PROCESS_MODE=inline \
   uvicorn app.main:app --app-dir backend --port 8000
+
 # frontend (terminal 2)
 cd VisionGuard/frontend && npm run dev    # http://localhost:5173
 
 # or both at once:
 bash scripts/run_local.sh
 ```
-Login: `officer@visionguard.in` / `officer123` (Command Center) · `citizen@visionguard.in` /
-`citizen123` (Citizen Portal).
 
-### Re-run the tests
+Login: `officer@visionguard.in` / `officer123` (Command Center) · `citizen@visionguard.in` / `citizen123` (Citizen Portal)
+
+> For local development without Docker, see [`TESTING.md`](TESTING.md).
+
+---
+
+## Testing
+
 ```bash
 .venv/bin/python scripts/test_violation_engine.py    # 23/23 engine logic
 .venv/bin/python scripts/test_backend_e2e.py         # 18/18 API e2e
@@ -115,9 +116,12 @@ Login: `officer@visionguard.in` / `officer123` (Command Center) · `citizen@visi
 .venv/bin/python ml/eval/bench_latency.py            # real latency/throughput
 ```
 
-### Full-quality helmet model (optional, free GPU)
-Open `ml/notebooks/train_helmet_colab.ipynb` in Google Colab (T4 GPU) → Run all → download
-`best.pt` → place at `ml/weights/helmet/best.pt`.
+---
+
+## Roadmap
+
+- **Full-quality helmet model** (optional, free GPU): open `ml/notebooks/train_helmet_colab.ipynb` in Google Colab (T4 GPU) → Run all → download `best.pt` → place at `ml/weights/helmet/best.pt`
+- **Scale-up:** see `docs/07_SCALABILITY_ROADMAP.md` for the path from prototype to whole-city deployment
 
 ---
 
