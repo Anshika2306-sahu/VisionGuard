@@ -23,7 +23,7 @@ double-only?" — using the **same ANPR + multi-angle-evidence + auto-challan + 
 **2,800+ Bengaluru Safe City cameras** that already exist (the very cameras behind the open **UVH-26 / BMD-45**
 datasets), and plotting everything on **MapMyIndia/Mappls** maps.
 
-## Why this is credible (not just a hackathon toy)
+## Why this is credible 
 
 | Asset we reuse | What it is | Why it matters |
 |---|---|---|
