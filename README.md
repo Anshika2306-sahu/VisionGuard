@@ -25,7 +25,7 @@ Rather than building enforcement infrastructure from scratch, VisionGuard reuses
 
 | Asset reused | What it is | Why it matters |
 |---|---|---|
-| **Bengaluru Safe City CCTV** | 2,800–3,600 existing police cameras | Zero new hardware needed to go live city-wide |
+| **Bengaluru Safe City CCTV** | 2,800–3,600 existing police cameras | No new camera hardware required — same infrastructure already in place |
 | **UVH-26 / BMD-45 datasets** | 26K–45K labelled images from those exact cameras, free (CC BY 4.0) | India-specific, Bengaluru-specific, pre-trained models included |
 | **MLFF / FASTag / ANPR pattern** | Nationally deployed tolling enforcement loop | A proven, already-accepted enforcement workflow we mirror |
 | **MapMyIndia / Mappls** | India's mapping backbone, free dev tier | Camera geolocation, heatmaps, citizen navigation alerts |
