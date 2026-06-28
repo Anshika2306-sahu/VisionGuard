@@ -75,14 +75,13 @@ def analyze(
     dets = detector.predict(clean)
     _associate_riders_and_helmet(clean, dets, helmet)
 
-    # direct helmet-detector pass: adds 'rider' detections (helmet/no_helmet) + plate boxes,
-    # so helmet violations fire even when the vehicle model misses the bike.
+    # direct helmet-detector pass: extracting plate boxes.
+    # We no longer blindly append 'helmet'/'no_helmet' boxes as 'rider' detections,
+    # as this was causing pedestrians to be falsely fined. Helmet violations will now
+    # exclusively rely on the strict motorcycle association logic above.
     plate_boxes: list = []
     for label, conf, box in (helmet.detect(clean) if hasattr(helmet, "detect") else []):
-        if label in ("no_helmet", "helmet"):
-            dets.append(Detection(cls="rider", conf=conf, bbox=box,
-                                  attrs={"helmet": label, "helmet_conf": conf, "rider_count": 1}))
-        elif label == "plate":
+        if label == "plate":
             plate_boxes.append((conf, box))
 
     violations = ve.evaluate(

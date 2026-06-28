@@ -50,7 +50,7 @@ class Settings(BaseSettings):
 
     # Models
     MODEL_DETECTOR: str = "ml/weights/uvh26/yolo11s.pt"
-    MODEL_HELMET: str = "ml/weights/helmet/best.pt"
+    MODEL_HELMET: str = "ml/weights/Helmet.pt"
     MODEL_PLATE: str = "ml/weights/plate/best.pt"
     OCR_ENGINE: str = "easyocr"
 
